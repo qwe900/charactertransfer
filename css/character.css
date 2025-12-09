@@ -1,0 +1,72 @@
+a.item span {
+    color: inherit;
+}
+.money span {
+    color: inherit;
+}
+ table.table tbody tr td a.icontinyl span,
+a.icontinyl span {
+    color: #ecc102;
+}
+
+.money span.gold svg.svg-inline--fa.fa-coins path {
+    color: goldenrod ;
+}
+
+.money span.gold {
+    color: goldenrod ;
+}
+
+.money span.silver svg.svg-inline--fa.fa-coins path {
+    color: silver ;
+}
+
+.money span.silver {
+    color: silver ;
+}
+.money span.copper svg.svg-inline--fa.fa-coins path {
+    color: #b87333 ;
+}
+
+.money span.copper {
+    color: #b87333 ;
+}
+
+.content-item {
+    display: none;
+}
+
+.accordion-button::before,
+.accordion-button::after {
+    background-image: none !important;
+}
+
+.progress-bar{
+ color: white;
+ background-color: #157099;
+}
+.progress {
+    background-color: black;
+}
+
+.progress small {
+    color: white;
+}
+
+.white-text {
+    color: white;
+}
+
+ td {
+text-align: center;
+ }
+
+ .currency-input {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px; /* Adjust spacing between the currency inputs */
+}
+.currency-input input {
+    margin-left: 5px; /* Space between icon and input */
+    width: 80px; /* Adjust input width as needed */
+}

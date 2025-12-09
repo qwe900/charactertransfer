@@ -1,0 +1,50 @@
+{
+	"name": "Character Transfer",
+	"description": "Character transfer system for FusionGen v2",
+	"author": {
+		"name": "FusionGen",
+		"website": "http:\/\/fusiongen.net"
+	},
+
+	"admin": [
+		{
+			"text": "Character Transfer",
+			"icon": "user",
+			"links": [
+				{
+					"text": "Transfer Log",
+					"icon": "list",
+					"controller": "admin",
+					"requirePermission": "viewAdmin"
+				}
+			]
+		}
+	],
+
+	"permissions": {
+		"view": {"default" : true, "description": "View the character transfer page." },
+		"viewAdmin": {"default" : false, "description": "View the transfer log." }
+	},
+
+	"roles": {
+		"view": {
+			"description": "View the character transfer module.",
+
+			"permissions": {
+				"view": true
+			}
+		},
+
+		"administrate": {
+			"description": "View the transfer log.",
+			"dangerLevel": 2,
+
+			"permissions": {
+				"viewAdmin": true
+			}
+		}
+	},
+
+
+	"enabled": true
+}
