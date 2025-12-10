@@ -57,21 +57,27 @@
 </head>
 <body>
   <div class="container">
-    <h1>Character Status</h1>
+    <h1>{$lang.character_status}</h1>
+
+    {if isset($message) && $message}
+      <div class="alert alert-info">{$message}</div>
+    {/if}
+
     {if !empty($transferdata)}
-      <form method="post" action="">
+      <form method="post" action="{$url}charactertransfer/admin">
+        <input type="hidden" name="{$csrf_name}" value="{$csrf_hash}" />
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>AccountID</th>
-              <th>Character</th>
-              <th>Race</th>
-              <th>Gender</th>
-              <th>Class</th>
-              <th>Server</th>
-              <th>Status</th>
-              <th>Options</th>
+              <th>{$lang.id}</th>
+              <th>{$lang.account_id}</th>
+              <th>{$lang.character}</th>
+              <th>{$lang.race}</th>
+              <th>{$lang.gender}</th>
+              <th>{$lang.class}</th>
+              <th>{$lang.server}</th>
+              <th>{$lang.status}</th>
+              <th>{$lang.options}</th>
             </tr>
           </thead>
           <tbody>
@@ -85,21 +91,21 @@
                 <td>{$row.class}</td>
                 <td>{$row.realm}</td>
                 <td>{$row.status}</td>
-   <td class="option-buttons">
-  <a href="admin/view/{$row.id}" target="_blank">
-    <button type="button">Review</button>
-  </a>
-  <button type="submit" name="option" value="deny_{$row.id}">Deny</button>
-  <button type="submit" name="option" value="approve_{$row.id}">Approve</button>
-  <button type="submit" name="option" value="delete_{$row.id}">Delete</button>
-</td>
+                <td class="option-buttons">
+                  <a href="{$url}charactertransfer/admin/view/{$row.id}" target="_blank">
+                    <button type="button">{$lang.review}</button>
+                  </a>
+                  <button type="submit" name="option" value="deny_{$row.id}">{$lang.deny}</button>
+                  <button type="submit" name="option" value="approve_{$row.id}">{$lang.approve}</button>
+                  <button type="submit" name="option" value="delete_{$row.id}">{$lang.delete}</button>
+                </td>
               </tr>
             {/foreach}
           </tbody>
         </table>
       </form>
     {else}
-      <p>No CharacterDump has been uploaded yet. No Transfer data available.</p>
+      <p>{$lang.no_chardump_admin}</p>
     {/if}
   </div>
 </body>

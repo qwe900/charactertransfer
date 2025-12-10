@@ -40,6 +40,7 @@ $lang['upload'] = "Hochladen";
 
 // View Page
 $lang['character_tab'] = "Charakter";
+$lang['name'] = "Name";
 $lang['achievements_tab'] = "Erfolge";
 $lang['inventory_tab'] = "Inventar";
 $lang['realmlist_realm_playtime'] = "Realmlist: %s, Realm: %s, Spielzeit: %s";
@@ -90,6 +91,10 @@ $lang['darkmoon_faire'] = "Dunkelmond-Jahrmarkt";
 $lang['childrens_week'] = "Kinderwoche";
 $lang['noblegarden'] = "Nobelgarten";
 $lang['feats_strength'] = "Taten der Stärke";
+$lang['name'] = "Name";
+$lang['points'] = "Punkte";
+$lang['time'] = "Zeit";
+$lang['count'] = "Anzahl";
 
 // Admin Page
 $lang['fusiongen_cms_title'] = "FusionGen CMS WoW Addon Vorlage";

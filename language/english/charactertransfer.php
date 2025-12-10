@@ -38,6 +38,7 @@ $lang['no_chardump_uploaded'] = "No CharacterDump has been uploaded yet, transfe
 $lang['select_file_upload'] = "Select file to upload:";
 $lang['upload'] = "Upload";
 
+
 // View Page
 $lang['character_tab'] = "Character";
 $lang['achievements_tab'] = "Achievements";
@@ -53,16 +54,16 @@ $lang['currency'] = "Currency";
 $lang['amount'] = "Amount";
 $lang['check'] = "Check";
 $lang['summary'] = "Summary";
-$lang['overall_progress'] = "Gesamter Fortschritt";
-$lang['general'] = "Allgemein";
-$lang['exploration'] = "Erkundung";
-$lang['professions'] = "Berufe";
-$lang['player_vs_player'] = "Spieler gegen Spieler";
+$lang['overall_progress'] = "Overall Progress";
+$lang['general'] = "General";
+$lang['exploration'] = "Exploration";
+$lang['professions'] = "Professions";
+$lang['player_vs_player'] = "Player vs Player";
 $lang['quests'] = "Quests";
-$lang['reputation'] = "Ruf";
-$lang['world_events'] = "Weltereignisse";
-$lang['dungeon_raids'] = "Dungeon & Schlachtzug";
-$lang['heroic_acts'] = "Heldentaten";
+$lang['reputation'] = "Reputation";
+$lang['world_events'] = "World Events";
+$lang['dungeon_raids'] = "Dungeon & Raids";
+$lang['heroic_acts'] = "Heroic Acts";
 $lang['classic'] = "Classic";
 $lang['burning_crusade'] = "The Burning Crusade";
 $lang['wrath_lich_king'] = "Wrath of the Lich King";
@@ -116,5 +117,7 @@ $lang['validate_title'] = "Validate: ";
 $lang['character_validation'] = "Charactervalidation";
 $lang['character_not_exists'] = "Character Does not Exists";
 $lang['nope'] = "nope";
+$lang['name'] = "name";
+$lang['count'] = "count";
 
 
