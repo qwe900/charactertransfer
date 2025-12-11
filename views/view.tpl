@@ -65,9 +65,9 @@
     <div class="tab-content" id="myTabContent">
         <!-- CHARACTER TAB -->
         <div class="tab-pane fade show active" id="character" role="tabpanel" aria-labelledby="character-tab">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-2" style="border: 2px solid pink;">
+                    <div class="col-12 col-md-2">
                         <table>
                             {assign var="specificItems" value=["head", "neck", "shoulders", "back", "chest", "body", "tabard", "wrists"]}
                             {foreach $specificItems as $key}
@@ -101,12 +101,27 @@
                             max-height: 100% !important;
                             display: block;
                         }
+
+                        /* Align accordion custom buttons with theme primary */
+                        .accordion-button.custombtn {
+                            background-color: transparent;
+                            color: var(--bs-primary);
+                            border: 1px solid var(--bs-primary);
+                            border-radius: .25rem;
+                            padding: .25rem .5rem;
+                            box-shadow: none;
+                        }
+                        .accordion-button.custombtn:hover,
+                        .accordion-button.custombtn:focus {
+                            background-color: rgba(var(--bs-primary-rgb, 13,110,253), .08);
+                            color: var(--bs-primary);
+                        }
                     </style>
-                    <div id="modelColumn" class="col-4" style="border: 2px solid red; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div id="model_3d" class="model" style="display: block; height: 625px; position: relative; margin: 0 auto; width: 100%; overflow: hidden;"></div>
+                    <div id="modelColumn" class="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center">
+                        <div id="model_3d" class="model" style="display: block; height: min(70vh, 600px); position: relative; margin: 0 auto; width: 100%; overflow: hidden;"></div>
                     </div>
 
-                    <div class="col-2" style="border: 2px solid blue;">
+                    <div class="col-12 col-md-2">
                         <table>
                             {assign var="specificItems" value=["hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2"]}
                             {foreach $specificItems as $key}
@@ -125,7 +140,7 @@
                         </table>
                     </div>
 
-                    <div class="col-4" style="border: 2px solid yellow;">
+                    <div class="col-12 col-md-4">
                         <h3>{lang("talent_specialization", "charactertransfer")}</h3>
                         <div class="specialization">
                             <table>

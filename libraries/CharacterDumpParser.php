@@ -723,6 +723,9 @@ class CharacterDumpParser
 
         $chardata["talenttree"][1]["link"] = $ranks ?? '';
         $chardata["talenttree"][2]["link"] = $ranks2 ?? '';
+        //
+
+
 
         return $chardata;
     }

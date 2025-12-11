@@ -1,17 +1,9 @@
-{if $msg}
-    <center style="padding:10px;">{$msg}</center>
-{else}
-    <center style="padding:10px;">{lang("donate_error_text", "donate")}</center>
-{/if}
+<div class="container py-3">
+  {if $msg}
+    <div class="alert alert-danger" role="alert">{$msg}</div>
+  {else}
+    <div class="alert alert-danger" role="alert">{lang("donate_error_text", "donate")}</div>
+  {/if}
 
-<!-- Add a back button -->
-<center style="padding:10px;">
-    <button onclick="goBack()">Go Back</button>
-</center>
-
-<!-- JavaScript function to navigate back -->
-<script>
-    function goBack() {
-        window.history.back();
-    }
-</script>
+  <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">{lang("back", "charactertransfer")|default:'Go Back'}</button>
+</div>
