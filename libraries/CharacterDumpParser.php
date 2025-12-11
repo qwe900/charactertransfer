@@ -82,26 +82,77 @@ class CharacterDumpParser
      * und gibt den dekodierten Dump als JSON-String zurück.
      *
      * @param string $luaFileContents
-     * @return string JSON
+     * @return string|null JSON-String oder null bei Fehler
      */
-    public function ReturnCharDumpAsJson($luaFileContents)
+    public function ReturnCharDumpAsJson($luaText)
     {
-        // Extract CHDMP_DATA and CHDMP_KEY from Lua file using regex
-        preg_match('/CHDMP_DATA\s*=\s*"([^"]+)"/', $luaFileContents, $dataMatch);
-        preg_match('/CHDMP_KEY\s*=\s*"([^"]+)"/', $luaFileContents, $keyMatch);
+        // Extract Base64 fields
+        $extract = function($name) use ($luaText) {
+            $pattern = '/\b' . preg_quote($name, '/') . '\s*=\s*"([A-Za-z0-9+\/=@\r\n\t\f\v\s]+)"/';
+            if (!preg_match($pattern, $luaText, $m)) {
+                return null;
+            }
+            return preg_replace('/\s+/', '', $m[1]); // remove whitespace inside ""
+        };
 
-        if (!isset($dataMatch[1]) || !isset($keyMatch[1])) {
-            return json_encode([]); // Return empty array if parsing fails
+        $data = $extract('CHDMP_DATA');
+        $key  = $extract('CHDMP_KEY');
+        if ($data === null || $key === null) return null;
+
+        $full = $data . $key;
+
+        // Helpers
+        $b64 = function($str, $strict=true) {
+            return base64_decode($str, $strict);
+        };
+
+        $json_try = function($s) {
+            $j = json_decode($s, true);
+            return (json_last_error() === JSON_ERROR_NONE) ? $j : null;
+        };
+
+        // Try decode variants
+        $variants = [
+            ['desc' => 'normal',   'pre' => $full],
+            ['desc' => 'reversed', 'pre' => strrev($full)],
+        ];
+
+        foreach ($variants as $v) {
+            // Outer decode
+            $outer = $b64($v['pre'], true);
+            if ($outer === false) $outer = $b64($v['pre'], false);
+            if ($outer === false) continue;
+
+            // Clean newlines
+            $outerClean = preg_replace('/\s+/', '', $outer);
+
+            // Inner decode
+            $json = $b64($outerClean, true);
+            if ($json === false) $json = $b64($outerClean, false);
+
+            // Maybe already JSON
+            if ($json === false) {
+                $trim = ltrim($outer);
+                if ($trim !== '' && ($trim[0] === '{' || $trim[0] === '[')) {
+                    $json = $outer;
+                }
+            }
+
+            // Try parsing
+            if ($json !== false && ($parsed = $json_try($json)) !== null) {
+                return json_encode($parsed);  // <- WICHTIG: Als String zurückgeben
+            }
+
+            // Try reversed JSON
+            if ($json !== false) {
+                $rev = strrev($json);
+                if (($parsed = $json_try($rev)) !== null) {
+                    return json_encode($parsed);  // <- WICHTIG: Als String zurückgeben
+                }
+            }
         }
 
-        $CharacterData = $dataMatch[1] . $keyMatch[1];
-        $decoded = $this->decodecharacterdump($CharacterData);
-
-        if (!is_array($decoded)) {
-            return json_encode([]);
-        }
-
-        return json_encode($decoded, JSON_UNESCAPED_UNICODE);
+        return null;
     }
 
     /**
