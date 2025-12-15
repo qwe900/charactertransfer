@@ -467,10 +467,11 @@ class CharacterDumpParser
             'Off hand'  => isset($characterequippment[17]["ID"]) ? $characterequippment[17]["ID"] : '0',
             'Ranged'    => isset($characterequippment[18]["ID"]) ? $characterequippment[18]["ID"] : '0',
             'Tabard'    => isset($characterequippment[19]["ID"]) ? $characterequippment[19]["ID"] : '0',
-            'Bag1'      => '0',
-            'Bag2'      => '0',
-            'Bag3'      => '0',
-            'Bag4'      => '0',
+            'Bag1'      => isset($characterequippment[20]["ID"]) ? $characterequippment[20]["ID"] : '0',
+            'Bag2'      => isset($characterequippment[21]["ID"]) ? $characterequippment[21]["ID"] : '0',
+            'Bag3'      => isset($characterequippment[22]["ID"]) ? $characterequippment[22]["ID"] : '0',
+            'Bag4'      => isset($characterequippment[23]["ID"]) ? $characterequippment[23]["ID"] : '0'
+
         ];
 
         $equipmentCache = "";
