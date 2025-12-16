@@ -1,45 +1,40 @@
-{literal}
-    <!-- jQuery in noConflict mode to support both theme and WoW Model Viewer -->
 
-    <script>
-        // Save reference to jQuery 3.5.1 for WoW Model Viewer
-        var $wowJQuery = jQuery.noConflict(true);
-        // Now $wowJQuery is jQuery 3.5.1, and $ might be the theme's jQuery
-    </script>
 
-    <!-- ZamModelViewer über deinen Node-Proxy (Port 3000!) -->
-    <script src="http://localhost:3000/modelviewer/live/viewer/viewer.min.js"></script>
 
-    <!-- Globale Einstellungen für den Viewer & Wowhead Tooltips -->
-    <script>
-        // Alle Model-/Textur-Daten laufen über deinen Proxy
-        window.CONTENT_PATH = 'http://localhost:3000/modelviewer/live/';
+<script>
+    // Wowhead Tooltips
+    const whTooltips = {
+        colorLinks: true,
+        iconizeLinks: true,
+        iconSize: true,
+        renameLinks: false,
 
-        // Optional: Mapping WotLK-Item-IDs -> Retail Display IDs
-        if (!window.WOTLK_TO_RETAIL_DISPLAY_ID_API) {
-            window.WOTLK_TO_RETAIL_DISPLAY_ID_API = 'https://wotlk.murlocvillage.com/api/items';
-        }
+    };
+</script>
 
-        // Wowhead Tooltips
-        const whTooltips = {
-            colorLinks: true,
-            iconizeLinks: true,
-            iconSize: true,
-            renameLinks: false
-        };
-    </script>
-
-    <!-- Wowhead Tooltip Script -->
-    <script>
-        window.WH = window.WH || {};
-        WH.debug = function() { console.log.apply(console, arguments); };
-    </script>
-    <script src="https://wow.zamimg.com/js/tooltips.js"></script>
-{/literal}
+<script src="https://wow.zamimg.com/js/tooltips.js"></script>
 
 <script>
     var talents = {json_encode($talenttree)};  // FusionGen template variable
     var achievements = {json_encode($achievements)};  // FusionGen template variable
+    var professions = {json_encode($professions)};  // FusionGen template variable
+    var currency = {json_encode($currency)};        // FusionGen template variable
+    var money = {json_encode($main.money)};         // FusionGen template variable
+    var playerclassindex = {json_encode($main.class)};
+    var playerclass;
+    switch (playerclassindex) {
+        case 1: playerclass = "warrior"; break;
+        case 2: playerclass = "paladin"; break;
+        case 3: playerclass = "hunter"; break;
+        case 4: playerclass = "rogue"; break;
+        case 5: playerclass = "priest"; break;
+        case 6: playerclass = "death-knight"; break;
+        case 7: playerclass = "shaman"; break;
+        case 8: playerclass = "mage"; break;
+        case 9: playerclass = "warlock"; break;
+        case 11: playerclass = "druid"; break;
+        default: playerclass = "unknown"; break;
+    }
 </script>
 
 <div class="container">
@@ -88,38 +83,32 @@
                         </table>
                     </div>
 
-                    <style>
-                        /* Ensure WoW model canvas fills its container */
-                        #model_3d { position: relative !important; overflow: hidden; width: 100%; height: 100%; }
-                        #model_3d > div { width: 100%; height: 100%; }
-                        #model_3d canvas,
-                        #model_3d > canvas,
-                        #model_3d > div > canvas {
-                            width: 100% !important;
-                            height: 100% !important;
-                            max-width: 100% !important;
-                            max-height: 100% !important;
-                            display: block;
-                        }
-
-                        /* Align accordion custom buttons with theme primary */
-                        .accordion-button.custombtn {
-                            background-color: transparent;
-                            color: var(--bs-primary);
-                            border: 1px solid var(--bs-primary);
-                            border-radius: .25rem;
-                            padding: .25rem .5rem;
-                            box-shadow: none;
-                        }
-                        .accordion-button.custombtn:hover,
-                        .accordion-button.custombtn:focus {
-                            background-color: rgba(var(--bs-primary-rgb, 13,110,253), .08);
-                            color: var(--bs-primary);
-                        }
-                    </style>
+                    <!-- MODEL -->
                     <div id="modelColumn" class="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center">
                         <div id="model_3d" class="model" style="display: block; height: min(70vh, 600px); position: relative; margin: 0 auto; width: 100%; overflow: hidden;"></div>
                     </div>
+                    <!-- ===== Model Viewer config ONCE ===== -->
+                    <script>
+                        window.WOWMV_CONFIG = {
+                            CONTENT_PATH: "{$url}charactertransfer/replica/modelviewer/live/",
+                            VIEWER_JS:    "{$url}charactertransfer/replica/modelviewer/live/viewer/viewer.min.js",
+                            WOTLK_TO_RETAIL_DISPLAY_ID_API: "https://wotlk.murlocvillage.com/api/items",
+                            DEBUG: true,
+                            CHARACTER: {
+                                race: {$main.race|default:7},
+                                gender: {$main.gender|default:1},
+                                items: {if isset($model) && is_array($model)}{json_encode($model)}{else}[]{/if}
+                            }
+                        };
+
+                        window.CONTENT_PATH = WOWMV_CONFIG.CONTENT_PATH;
+                        window.WOTLK_TO_RETAIL_DISPLAY_ID_API = WOWMV_CONFIG.WOTLK_TO_RETAIL_DISPLAY_ID_API;
+                    </script>
+
+                    <!-- Load wrapper (it loads viewer.min.js internally with injected jQuery 3.5.1) -->
+                    <script src="{$url}application/modules/charactertransfer/js/jquery-3.5.1.min.js"></script>
+                    <script src="{$url}application/modules/charactertransfer/js/wowmodel.min.js"></script>
+
 
                     <div class="col-12 col-md-2">
                         <table>
@@ -132,7 +121,9 @@
                                         </td>
                                         <td>
                                             <div class="equipped">{$items[$key].equipped}</div>
-                                            <div class="replacement" style="display:none;">{$items[$key].replacement}</div>
+                                            {if array_key_exists("replacement", $items[$key])}
+                                                <div class="replacement" style="display:none;">{$items[$key].replacement}</div>
+                                            {/if}
                                         </td>
                                     </tr>
                                 {/if}
@@ -262,116 +253,29 @@
 
                 <button id="submitButton" class="btn btn-default">{lang("check", "charactertransfer")}</button>
 
-                <!-- WOW-MODEL-VIEWER INITIALISIERUNG MIT PHP-DATEN -->
                 <script>
-                    // Fallbacks, falls oben im Head nicht gesetzt (Template mehrfach verwendet etc.)
-                    if (!window.CONTENT_PATH) {
-                        window.CONTENT_PATH = 'http://localhost:3000/modelviewer/live/';
-                    }
-                    if (!window.WOTLK_TO_RETAIL_DISPLAY_ID_API) {
-                        window.WOTLK_TO_RETAIL_DISPLAY_ID_API = 'https://wotlk.murlocvillage.com/api/items';
-                    }
+                    // Currency-Submit
+                    document.getElementById('submitButton').addEventListener("click", function() {
+                        let items = [];
 
-                    // Character-Daten aus PHP
-                    const character = {
-                        race: {$main.race},
-                        gender: {$main.gender},
-                        skin: 4,
-                        face: 0,
-                        hairStyle: 5,
-                        hairColor: 5,
-                        facialStyle: 5,
-                        items: [] // wird gleich gefüllt
-                    };
+                        let currencyTable = document.querySelector('table[name="currency"]');
+                        currencyTable.querySelectorAll('tbody tr').forEach(tr => {
+                            let aElement = tr.querySelector('td[type="currency"] a');
+                            let inputElement = tr.querySelector('input[type="number"]');
 
-                    {if isset($model) && is_array($model)}
-                    // Equipments aus PHP (Server-Datenstruktur)
+                            if (aElement && inputElement) {
+                                let itemId = aElement.getAttribute('data-item-id');
+                                let itemValue = Number(inputElement.value);
+                                items.push({ id: itemId, count: itemValue });
+                            } else {
+                                console.warn('One or more elements could not be found in a row.', tr);
+                            }
+                        });
 
-                    const equipments = {json_encode($model)};
-                    {else}
-                    const equipments = [];
-                    {/if}
+                        console.log(items);
+                    });
                 </script>
 
-                {literal}
-                    <script>
-                        window.WH = window.WH || {};
-                        WH.debug = WH.debug || function () {};
-
-                        // Helpers to ensure the model fits its container
-                        function triggerModelResize() {
-                            try {
-                                window.dispatchEvent(new Event('resize'));
-                            } catch (e) {}
-                        }
-                        function afterModelCreated(model) {
-                            window.currentModel = model;
-                            try {
-                                const el = document.getElementById('model_3d');
-                                if (model && typeof model.resize === 'function' && el) {
-                                    model.resize(el.clientWidth, el.clientHeight);
-                                }
-                            } catch (e) {}
-                            setTimeout(triggerModelResize, 50);
-                        }
-                        const characterTab = document.getElementById('character-tab');
-                        if (characterTab) {
-                            characterTab.addEventListener('shown.bs.tab', triggerModelResize);
-                        }
-                        let __resizeTO;
-                        window.addEventListener('resize', function() {
-                            clearTimeout(__resizeTO);
-                            __resizeTO = setTimeout(triggerModelResize, 100);
-                        });
-
-                        // Model direkt beim Laden der Seite rendern, da der Character-Tab standardmäßig aktiv ist
-                        import('https://cdn.skypack.dev/wow-model-viewer').then(module => {
-                            const { generateModels, findItemsInEquipments } = module;
-
-                            // Items aus Equipment extrahieren, falls möglich
-                            if (typeof findItemsInEquipments === 'function' && Array.isArray(equipments)) {
-                                findItemsInEquipments(equipments)
-                                    .then(items => {
-                                        character.items = items;
-                                        console.log('Items aus Equipment extrahiert:', items);
-                                        return generateModels(1, '#model_3d', character);
-                                    })
-                                    .then(model => {
-                                        afterModelCreated(model);
-                                    })
-                                    .catch(console.error);
-                            } else {
-                                // Fallback: ohne Items
-                                generateModels(1, '#model_3d', character)
-                                    .then(model => {
-                                        afterModelCreated(model);
-                                    })
-                                    .catch(console.error);
-                            }
-                        }).catch(console.error);
-
-                        // Currency-Submit
-                        document.getElementById('submitButton').addEventListener("click", function() {
-                            let items = [];
-
-                            let currencyTable = document.querySelector('table[name="currency"]');
-                            currencyTable.querySelectorAll('tbody tr').forEach(tr => {
-                                let aElement = tr.querySelector('td[type="currency"] a');
-                                let inputElement = tr.querySelector('input[type="number"]');
-
-                                if (aElement && inputElement) {
-                                    let itemId = aElement.getAttribute('data-item-id');
-                                    let itemValue = Number(inputElement.value);
-                                    items.push({ id: itemId, count: itemValue });
-                                } else {
-                                    console.warn('One or more elements could not be found in a row.', tr);
-                                }
-                            });
-
-                            console.log(items);
-                        });
-                    </script>
-                {/literal}
             </div> <!-- container -->
         </div> <!-- /CHARACTER TAB -->
 
@@ -683,8 +587,8 @@
                 let completedAchievements = filteredAchievements.filter(achievement => achievement.completed === 1).length;
                 let progressOverall = (completedAchievements / totalAchievements) * 100;
 
-                $wowJQuery('#progressOverall .progress-bar').css('width', progressOverall + '%').attr('aria-valuenow', progressOverall);
-                $wowJQuery('#progressOverall small').text(completedAchievements + ' / ' + totalAchievements);
+                $('#progressOverall .progress-bar').css('width', progressOverall + '%').attr('aria-valuenow', progressOverall);
+                $('#progressOverall small').text(completedAchievements + ' / ' + totalAchievements);
 
                 let categoryCounts = achievements.reduce((acc, achievement) => {
                     let category =
@@ -710,13 +614,13 @@
                     return acc;
                 }, {});
 
-                $wowJQuery('#contentSummary .progress-bar').each(function() {
-                    let category = $wowJQuery(this).data('cat');
+                $('#contentSummary .progress-bar').each(function() {
+                    let category = $(this).data('cat');
 
                     if (categoryCounts[category]) {
                         let progress = (categoryCounts[category].completed / categoryCounts[category].total) * 100;
-                        $wowJQuery(this).css('width', progress + '%').attr('aria-valuenow', progress);
-                        $wowJQuery(this).parent().find('small').text(categoryCounts[category].completed + ' / ' + categoryCounts[category].total);
+                        $(this).css('width', progress + '%').attr('aria-valuenow', progress);
+                        $(this).parent().find('small').text(categoryCounts[category].completed + ' / ' + categoryCounts[category].total);
                     }
                 });
 
@@ -743,7 +647,6 @@
                     div.innerHTML = contentHTMLtable;
                 });
 
-                const wowhead_tooltips = { colorlinks: true, iconizelinks: true, renamelinks: true, hide: { droppedby: true, dropchance: true } };
 
                 function showContent(targetId) {
                     document.querySelectorAll(".content-item").forEach((content) => {
@@ -818,25 +721,7 @@
                 </script>
 
                 <script type="text/javascript">
-                    var professions = {json_encode($professions)};  // FusionGen template variable
-                    var currency = {json_encode($currency)};        // FusionGen template variable
-                    var money = {json_encode($main.money)};         // FusionGen template variable
-                    var playerclassindex = {json_encode($main.class)};
-                    var playerclass;
 
-                    switch (playerclassindex) {
-                        case 1: playerclass = "warrior"; break;
-                        case 2: playerclass = "paladin"; break;
-                        case 3: playerclass = "hunter"; break;
-                        case 4: playerclass = "rogue"; break;
-                        case 5: playerclass = "priest"; break;
-                        case 6: playerclass = "death-knight"; break;
-                        case 7: playerclass = "shaman"; break;
-                        case 8: playerclass = "mage"; break;
-                        case 9: playerclass = "warlock"; break;
-                        case 11: playerclass = "druid"; break;
-                        default: playerclass = "unknown"; break;
-                    }
 
                     professions.main.forEach(function(item) {
                         var html = '<div class="stub">' + item.Link + ' ' + item.Current + ' / ' + item.Max + '</div>';
@@ -875,24 +760,45 @@
                 </script>
 
                 <script>
-                    $wowJQuery(document).ready(function() {
+                    function bootModelOnce(){
+                        if (window.__WOWMODEL_BOOTED__) return;
+                        window.__WOWMODEL_BOOTED__ = true;
+
+                        if (!window.WOWModel || !WOWModel.create) {
+                            console.error("WOWModel not loaded");
+                            return;
+                        }
+
+                        window.WH = window.WH || {};
+                        if (typeof window.WH.debug !== "function") {
+                            window.WH.debug = function () {
+                                try { console.log.apply(console, arguments); } catch (e) {}
+                            };
+                        }
+
+                        WOWModel.create("#model_3d", WOWMV_CONFIG.CHARACTER)
+                            .then(function(model){ window.currentModel = model; })
+                            .catch(function(err){ console.error("WOWModel.create failed:", err); });
+                    }
+                    $(document).ready(function() {
+                        bootModelOnce();
                         // checkbox swap equipped/replacement
-                        $wowJQuery('#myTabContent input[type="checkbox"]').click(function() {
-                            if ($wowJQuery(this).is(':checked')) {
-                                if ($wowJQuery(this).closest('td').next('td').html() !== null && $wowJQuery(this).closest('td').next('td').html() !== undefined) {
-                                    $wowJQuery(this).closest('tr').find('.equipped').hide();
-                                    $wowJQuery(this).closest('tr').find('.replacement').show();
+                        $('#myTabContent input[type="checkbox"]').click(function() {
+                            if ($(this).is(':checked')) {
+                                if ($(this).closest('td').next('td').html() !== null && $(this).closest('td').next('td').html() !== undefined) {
+                                    $(this).closest('tr').find('.equipped').hide();
+                                    $(this).closest('tr').find('.replacement').show();
                                 } else {
-                                    $wowJQuery(this).nextAll('div.equipped').first().hide();
-                                    $wowJQuery(this).nextAll('div.replacement').first().show();
+                                    $(this).nextAll('div.equipped').first().hide();
+                                    $(this).nextAll('div.replacement').first().show();
                                 }
                             } else {
-                                if ($wowJQuery(this).closest('td').next('td').html() !== null && $wowJQuery(this).closest('td').next('td').html() !== undefined) {
-                                    $wowJQuery(this).closest('tr').find('.equipped').show();
-                                    $wowJQuery(this).closest('tr').find('.replacement').hide();
+                                if ($(this).closest('td').next('td').html() !== null && $(this).closest('td').next('td').html() !== undefined) {
+                                    $(this).closest('tr').find('.equipped').show();
+                                    $(this).closest('tr').find('.replacement').hide();
                                 } else {
-                                    $wowJQuery(this).nextAll('div.equipped').first().show();
-                                    $wowJQuery(this).nextAll('div.replacement').first().hide();
+                                    $(this).nextAll('div.equipped').first().show();
+                                    $(this).nextAll('div.replacement').first().hide();
                                 }
                             }
                         });
@@ -905,17 +811,17 @@
                             var rows   = table.find('tbody tr').toArray();
 
                             rows.sort(function(a, b) {
-                                var aVal = $wowJQuery(a).find('td').eq(column).text().trim();
-                                var bVal = $wowJQuery(b).find('td').eq(column).text().trim();
+                                var aVal = $(a).find('td').eq(column).text().trim();
+                                var bVal = $(b).find('td').eq(column).text().trim();
 
                                 // Currency table: sort by item-id or amount
                                 if (table.attr('name') === 'currency') {
                                     if (column === 0) { // item id
-                                        aVal = $wowJQuery(a).find('td').eq(column).find('a').attr('data-item-id') || aVal;
-                                        bVal = $wowJQuery(b).find('td').eq(column).find('a').attr('data-item-id') || bVal;
+                                        aVal = $(a).find('td').eq(column).find('a').attr('data-item-id') || aVal;
+                                        bVal = $(b).find('td').eq(column).find('a').attr('data-item-id') || bVal;
                                     } else if (column === 1) { // amount
-                                        aVal = parseInt($wowJQuery(a).find('td').eq(column).find('input').val()) || 0;
-                                        bVal = parseInt($wowJQuery(b).find('td').eq(column).find('input').val()) || 0;
+                                        aVal = parseInt($(a).find('td').eq(column).find('input').val()) || 0;
+                                        bVal = parseInt($(b).find('td').eq(column).find('input').val()) || 0;
                                     }
                                 }
 

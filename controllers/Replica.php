@@ -8,7 +8,7 @@ class Replica extends MX_Controller
 
     // allow-list: URL prefix => upstream base
     private $allowMap = [
-        'modelviewer/live' => 'https://wow.zamimg.com/modelviewer/live',
+        'modelviewer/live' => 'https://wow.zamimg.com/modelviewer/wrath/',
     ];
 
     public function __construct()
@@ -89,6 +89,7 @@ class Replica extends MX_Controller
 
         $baseUrl = rtrim($this->allowMap[$allowKey], '/');
         $upstreamUrl = $baseUrl . '/' . $relPath;
+        $wasFallback = false;
 
         $rangeHeader       = $this->getRequestHeader('Range');
         $ifNoneMatch       = $this->getRequestHeader('If-None-Match');
@@ -115,7 +116,7 @@ class Replica extends MX_Controller
         }
 
         // --- Cache full responses ---
-        if ($resp['status'] === 200 && !$rangeHeader && $resp['body'] !== null) {
+        if ($resp['status'] === 200 && !$rangeHeader && $resp['body'] !== null && !$wasFallback) {
             file_put_contents($cachePath, $resp['body']);
             $meta = [
                 'stored_at'     => time(),
