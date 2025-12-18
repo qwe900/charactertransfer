@@ -8,7 +8,7 @@ class Replica extends MX_Controller
 
     // allow-list: URL prefix => upstream base
     private $allowMap = [
-        'modelviewer/live' => 'https://wow.zamimg.com/modelviewer/wrath/',
+        'modelviewer/live' => 'https://wow.zamimg.com/modelviewer/live/',
     ];
 
     public function __construct()
@@ -19,6 +19,8 @@ class Replica extends MX_Controller
         if (!is_dir($this->cacheDir)) {
             @mkdir($this->cacheDir, 0775, true);
         }
+
+        $this->logFile = dirname($this->cacheDir) . '/replica.log';
     }
 
     /**
@@ -28,9 +30,19 @@ class Replica extends MX_Controller
      */
     public function _remap($firstSegment, $params = [])
     {
+        // Log the request
+        $logEntry = sprintf(
+            "[%s] %s %s %s\n",
+            date('Y-m-d H:i:s'),
+            $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            $_SERVER['REQUEST_METHOD'] ?? 'unknown',
+            current_url()
+        );
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
+
         // =======================
-// DEBUG: return resolved URL
-// =======================
+        // DEBUG: return resolved URL
+        // =======================
         if ($this->input->get('debug') === 'url') {
             $prefixA = strtolower($firstSegment);
             $prefixB = strtolower($params[0] ?? '');
@@ -90,6 +102,10 @@ class Replica extends MX_Controller
         $baseUrl = rtrim($this->allowMap[$allowKey], '/');
         $upstreamUrl = $baseUrl . '/' . $relPath;
         $wasFallback = false;
+
+        // Log the external URL being requested
+        $logEntry = sprintf("[%s] External URL: %s\n", date('Y-m-d H:i:s'), $upstreamUrl);
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
 
         $rangeHeader       = $this->getRequestHeader('Range');
         $ifNoneMatch       = $this->getRequestHeader('If-None-Match');
@@ -161,6 +177,8 @@ class Replica extends MX_Controller
 
         $resp = curl_exec($ch);
         if ($resp === false) {
+            $logEntry = sprintf("[%s] Fetch failed for URL: %s\n", date('Y-m-d H:i:s'), $url);
+            file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
             curl_close($ch);
             return ['status' => 502, 'headers' => [], 'body' => null];
         }

@@ -20,6 +20,9 @@
     var professions = {json_encode($professions)};  // FusionGen template variable
     var currency = {json_encode($currency)};        // FusionGen template variable
     var money = {json_encode($main.money)};         // FusionGen template variable
+    var mounts = {json_encode($mounts)};            // FusionGen template variable
+    var pets = {json_encode($pets)};                // FusionGen template variable
+    var reputation = {json_encode($reputation)};    // FusionGen template variable
     var playerclassindex = {json_encode($main.class)};
     var playerclass;
     switch (playerclassindex) {
@@ -53,6 +56,18 @@
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button" role="tab" aria-controls="inventory" aria-selected="false">{lang("inventory_tab", "charactertransfer")}</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" data-bs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false">Statistics</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mounts-tab" data-bs-toggle="tab" data-bs-target="#mounts" type="button" role="tab" aria-controls="mounts" aria-selected="false">Mounts</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="companions-tab" data-bs-toggle="tab" data-bs-target="#companions" type="button" role="tab" aria-controls="companions" aria-selected="false">Companions</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="reputation-tab" data-bs-toggle="tab" data-bs-target="#reputation" type="button" role="tab" aria-controls="reputation" aria-selected="false">Reputation</button>
         </li>
     </ul>
 
@@ -88,25 +103,23 @@
                         <div id="model_3d" class="model" style="display: block; height: min(70vh, 600px); position: relative; margin: 0 auto; width: 100%; overflow: hidden;"></div>
                     </div>
                     <!-- ===== Model Viewer config ONCE ===== -->
+
+                    <script src="{$url}charactertransfer/replica/modelviewer/live/viewer/viewer.min.js"></script>
+
+                    <!-- 3) Configure paths BEFORE your module code runs -->
                     <script>
-                        window.WOWMV_CONFIG = {
-                            CONTENT_PATH: "{$url}charactertransfer/replica/modelviewer/live/",
-                            VIEWER_JS:    "{$url}charactertransfer/replica/modelviewer/live/viewer/viewer.min.js",
-                            WOTLK_TO_RETAIL_DISPLAY_ID_API: "https://wotlk.murlocvillage.com/api/items",
-                            DEBUG: true,
-                            CHARACTER: {
-                                race: {$main.race|default:7},
-                                gender: {$main.gender|default:1},
-                                items: {if isset($model) && is_array($model)}{json_encode($model)}{else}[]{/if}
-                            }
-                        };
+                        // IMPORTANT: point this to the content root
+                        window.CONTENT_PATH = "{$url}charactertransfer/replica/modelviewer/live/";
 
-                        window.CONTENT_PATH = WOWMV_CONFIG.CONTENT_PATH;
-                        window.WOTLK_TO_RETAIL_DISPLAY_ID_API = WOWMV_CONFIG.WOTLK_TO_RETAIL_DISPLAY_ID_API;
+                        // Define WH if not present
+
+                        window.WH = {
+                            debug: console.log,
+                            defaultAnimation: "Stand",
+                            WebP: { getImageExtension: () => ".webp" },
+
+                        }
                     </script>
-
-                    <!-- Load wrapper (it loads viewer.min.js internally with injected jQuery 3.5.1) -->
-                    <script src="{$url}application/modules/charactertransfer/js/jquery-3.5.1.min.js"></script>
                     <script src="{$url}application/modules/charactertransfer/js/wowmodel.min.js"></script>
 
 
@@ -760,28 +773,24 @@
                 </script>
 
                 <script>
-                    function bootModelOnce(){
-                        if (window.__WOWMODEL_BOOTED__) return;
-                        window.__WOWMODEL_BOOTED__ = true;
+                    const character = {
+                        "race": 5,
+                        "gender": 1,
+                        "skin": 4,
+                        "face": 0,
+                        "hairStyle": 5,
+                        "hairColor": 5,
+                        "facialStyle": 5,
 
-                        if (!window.WOWModel || !WOWModel.create) {
-                            console.error("WOWModel not loaded");
-                            return;
-                        }
+                    };
 
-                        window.WH = window.WH || {};
-                        if (typeof window.WH.debug !== "function") {
-                            window.WH.debug = function () {
-                                try { console.log.apply(console, arguments); } catch (e) {}
-                            };
-                        }
-
-                        WOWModel.create("#model_3d", WOWMV_CONFIG.CHARACTER)
-                            .then(function(model){ window.currentModel = model; })
-                            .catch(function(err){ console.error("WOWModel.create failed:", err); });
-                    }
+                    (async () => {
+                        var items = await findItemsInEquipments(model)
+                        character.items = items;
+                        const modelViewer = await generateModels(1, `#model_3d`, character);
+                    })();
                     $(document).ready(function() {
-                        bootModelOnce();
+
                         // checkbox swap equipped/replacement
                         $('#myTabContent input[type="checkbox"]').click(function() {
                             if ($(this).is(':checked')) {
@@ -865,5 +874,135 @@
                 </script>
             </div>
         </div> <!-- /INVENTORY TAB -->
+
+        <!-- STATISTICS TAB -->
+        <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+            <div class="container">
+                <h3>Character Statistics</h3>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Statistic</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if isset($main.stats) && is_array($main.stats)}
+                                {foreach $main.stats as $statName => $statValue}
+                                    <tr>
+                                        <td>{$statName}</td>
+                                        <td>{$statValue}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
+                                <tr>
+                                    <td colspan="2">No statistics available</td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- /STATISTICS TAB -->
+
+        <!-- MOUNTS TAB -->
+        <div class="tab-pane fade" id="mounts" role="tabpanel" aria-labelledby="mounts-tab">
+            <div class="container">
+                <h3>Mounts</h3>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mount</th>
+                                <th>Spell ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if isset($mounts) && is_array($mounts)}
+                                {foreach $mounts as $mount}
+                                    <tr>
+                                        <td>
+                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/spell={$mount.spell}"></a>
+                                        </td>
+                                        <td>{$mount.spell}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
+                                <tr>
+                                    <td colspan="2">No mounts available</td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- /MOUNTS TAB -->
+
+        <!-- COMPANIONS TAB -->
+        <div class="tab-pane fade" id="companions" role="tabpanel" aria-labelledby="companions-tab">
+            <div class="container">
+                <h3>Companions</h3>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Companion</th>
+                                <th>Creature ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if isset($pets) && is_array($pets)}
+                                {foreach $pets as $pet}
+                                    <tr>
+                                        <td>
+                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/npc={$pet.creature}"></a>
+                                        </td>
+                                        <td>{$pet.creature}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
+                                <tr>
+                                    <td colspan="2">No companions available</td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- /COMPANIONS TAB -->
+
+        <!-- REPUTATION TAB -->
+        <div class="tab-pane fade" id="reputation" role="tabpanel" aria-labelledby="reputation-tab">
+            <div class="container">
+                <h3>Reputation</h3>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Faction</th>
+                                <th>Standing</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if isset($reputation) && is_array($reputation)}
+                                {foreach $reputation as $rep}
+                                    <tr>
+                                        <td>{$rep.faction}</td>
+                                        <td>{$rep.standing}</td>
+                                        <td>{$rep.value}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
+                                <tr>
+                                    <td colspan="3">No reputation data available</td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- /REPUTATION TAB -->
     </div> <!-- /tab-content -->
 </div>

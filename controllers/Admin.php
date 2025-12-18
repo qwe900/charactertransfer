@@ -67,27 +67,15 @@ class Admin extends MX_Controller
     /**
      * Charakter-/Realm-bezogene Properties
      */
-    private $id;
-    private $realm;
-    private $realmName;
     private $charData = [];
-    private $class;
-    private $className;
-    private $race;
-    private $raceName;
-    private $level;
-    private $accountId;
-    private $account;
-    private $gender;
-    private $stats;
+
 
     /**
      * Item-/Model-Daten für das Template
      */
     private $items = [];
     private $model = [];
-    private $c_connection;
-    private $w_connection;
+
     public function __construct()
     {
         parent::__construct();
@@ -108,7 +96,6 @@ class Admin extends MX_Controller
 
         // Assets
         $this->css = "modules/charactertransfer/css/character.css";
-        $this->js  = "modules/charactertransfer/js/jquery-3.5.1.min.js";
 
         // Initialzustände
         $this->model    = [];
@@ -120,33 +107,6 @@ class Admin extends MX_Controller
         }
     }
 
-    public function get_displayID($entryId, $realmId = 1)
-    {
-        $entryId = (int)$entryId;
-
-        if ($entryId <= 0) {
-            return 0;
-        }
-
-        // Connect to the world database
-        $realm = $this->realms->getRealm($realmId);
-        $realm->getWorld()->connect();
-        $this->w_connection = $realm->getWorld()->getConnection();
-
-        $this->w_connection
-            ->select(column("item_template", "displayid", false, $realmId))
-            ->from(table("item_template", $realmId))
-            ->where(column("item_template", "entry", false, $realmId), $entryId)
-            ->limit(1);
-
-        $query = $this->w_connection->get();
-
-        if ($query->num_rows() === 1) {
-            return (int)$query->row()->displayid;
-        }
-
-        return 0;
-    }
 
 
     // ------------------------------------------------------------------------
@@ -242,7 +202,7 @@ class Admin extends MX_Controller
 
         // Beispiel: https://www.wowhead.com/wotlk/de/item=ITEMID&xml
         return sprintf(
-            '%s/wotlk/%s/item=%d&xml',
+            '%s/%s/item=%d&xml',
             $this->wowheadBaseUrl,
             $locale,
             $itemId
@@ -637,10 +597,39 @@ class Admin extends MX_Controller
 
                     // 3D-Modeldaten
                     if (in_array($slotId, self::ALLOWED_MODEL_SLOTS, true) && $equippedId > 0) {
-                        $DisplayID = $this->getItemDisplayID($equippedId);
-                        if ($DisplayID > 0)
-                        $this->model[] = [$slotId, $DisplayID];
+                        (int)$DisplayID = $this->getItemDisplayID($equippedId);
+                        if ($DisplayID > 0) {
+                            switch ($slotId) {
+                                case 15:
+                                    $slotId = 16;
+                                    break;
+                                case 16:
+                                    $slotId = 21;
+                                    break;
+                                case 17:
+                                    $slotId = 22;
+                                    break;
 
+
+                            }
+
+                            $replacementDisplayID = $this->getItemDisplayID($replacementId);
+                            $transmog = [];
+                            if ($replacementId != $equippedId) {
+                                $transmog = [
+                                    "entry" => (int)$replacementId,
+                                    "displayid" => (int)$replacementDisplayID
+                                ];
+                            }
+                            $this->model[] = [
+                                "item" => [
+                                    "entry" => $equippedId,
+                                    "displayid" => (int)$DisplayID
+                                ],
+                                "transmog" => $transmog,
+                                "slot" => $slotId
+                            ];
+                        }
                     }
                 } else {
                     // Kein Item: Platzhalter-Bild
