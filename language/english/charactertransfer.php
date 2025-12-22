@@ -91,6 +91,8 @@ $lang['darkmoon_faire'] = "The Darkmoon Faire";
 $lang['childrens_week'] = "Children's Week";
 $lang['noblegarden'] = "Noblegarden";
 $lang['feats_strength'] = "Feats of Strength";
+$lang['achievementpoints'] = "Achievement Points";
+
 
 // Admin Page
 $lang['fusiongen_cms_title'] = "FusionGen CMS WoW Addon Template";

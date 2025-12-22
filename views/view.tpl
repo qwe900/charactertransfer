@@ -118,7 +118,8 @@
                             "facialStyle": 5,
                             items: {if isset($model) && is_array($model)}{json_encode($model)}{else}[]{/if}
                         };
-                        const model = generateModels(1, `#model_3d`, character);
+
+                        const model = generateModels(1, '#model_3d', character);
 
                         WH.debug = function(param,param2, param3) {
                             console.log(param, param2, param3);
@@ -455,6 +456,8 @@
                         <!-- SUMMARY -->
                         <div id="contentSummary" class="content-item">
                             <div class="container">
+                                <h1>{lang("achievementpoints", "charactertransfer")}: {$achievementspoints}</h1>
+
                                 <label class="white-text" for="progressOverall">{lang("overall_progress", "charactertransfer")}</label>
                                 <div class="progress position-relative" id="progressOverall">
                                     <div class="progress-bar" data-cat="overall" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
@@ -733,11 +736,6 @@
                 </table>
 
                 <script>
-                    const model = {json_encode($model)};  // FusionGen template variable
-                </script>
-
-                <script type="text/javascript">
-
 
                     professions.main.forEach(function(item) {
                         var html = '<div class="stub">' + item.Link + ' ' + item.Current + ' / ' + item.Max + '</div>';
@@ -867,24 +865,24 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                            <tr>
-                                <th>Statistic</th>
-                                <th>Value</th>
-                            </tr>
+                        <tr>
+                            <th>Statistic</th>
+                            <th>Value</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {if isset($main.stats) && is_array($main.stats)}
-                                {foreach $main.stats as $statName => $statValue}
-                                    <tr>
-                                        <td>{$statName}</td>
-                                        <td>{$statValue}</td>
-                                    </tr>
-                                {/foreach}
-                            {else}
+                        {if isset($main.stats) && is_array($main.stats)}
+                            {foreach $main.stats as $statName => $statValue}
                                 <tr>
-                                    <td colspan="2">No statistics available</td>
+                                    <td>{$statName}</td>
+                                    <td>{$statValue}</td>
                                 </tr>
-                            {/if}
+                            {/foreach}
+                        {else}
+                            <tr>
+                                <td colspan="2">No statistics available</td>
+                            </tr>
+                        {/if}
                         </tbody>
                     </table>
                 </div>
@@ -898,26 +896,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                            <tr>
-                                <th>Mount</th>
-                                <th>Spell ID</th>
-                            </tr>
+                        <tr>
+                            <th>Mount</th>
+                            <th>Spell ID</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {if isset($mounts) && is_array($mounts)}
-                                {foreach $mounts as $mount}
-                                    <tr>
-                                        <td>
-                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/spell={$mount.spell}"></a>
-                                        </td>
-                                        <td>{$mount.spell}</td>
-                                    </tr>
-                                {/foreach}
-                            {else}
+                        {if isset($mounts) && is_array($mounts)}
+                            {foreach $mounts as $mount}
                                 <tr>
-                                    <td colspan="2">No mounts available</td>
+                                    <td>
+                                        <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/spell={$mount.spell}"></a>
+                                    </td>
+                                    <td>{$mount.spell}</td>
                                 </tr>
-                            {/if}
+                            {/foreach}
+                        {else}
+                            <tr>
+                                <td colspan="2">No mounts available</td>
+                            </tr>
+                        {/if}
                         </tbody>
                     </table>
                 </div>
@@ -931,26 +929,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                            <tr>
-                                <th>Companion</th>
-                                <th>Creature ID</th>
-                            </tr>
+                        <tr>
+                            <th>Companion</th>
+                            <th>Creature ID</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {if isset($pets) && is_array($pets)}
-                                {foreach $pets as $pet}
-                                    <tr>
-                                        <td>
-                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/npc={$pet.creature}"></a>
-                                        </td>
-                                        <td>{$pet.creature}</td>
-                                    </tr>
-                                {/foreach}
-                            {else}
+                        {if isset($pets) && is_array($pets)}
+                            {foreach $pets as $pet}
                                 <tr>
-                                    <td colspan="2">No companions available</td>
+                                    <td>
+                                        <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/npc={$pet.creature}"></a>
+                                    </td>
+                                    <td>{$pet.creature}</td>
                                 </tr>
-                            {/if}
+                            {/foreach}
+                        {else}
+                            <tr>
+                                <td colspan="2">No companions available</td>
+                            </tr>
+                        {/if}
                         </tbody>
                     </table>
                 </div>
@@ -964,26 +962,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                            <tr>
-                                <th>Faction</th>
-                                <th>Standing</th>
-                                <th>Value</th>
-                            </tr>
+                        <tr>
+                            <th>Faction</th>
+                            <th>Standing</th>
+                            <th>Value</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {if isset($reputation) && is_array($reputation)}
-                                {foreach $reputation as $rep}
-                                    <tr>
-                                        <td>{$rep.faction}</td>
-                                        <td>{$rep.standing}</td>
-                                        <td>{$rep.value}</td>
-                                    </tr>
-                                {/foreach}
-                            {else}
+                        {if isset($reputation) && is_array($reputation)}
+                            {foreach $reputation as $rep}
                                 <tr>
-                                    <td colspan="3">No reputation data available</td>
+                                    <td>{$rep.faction}</td>
+                                    <td>{$rep.standing}</td>
+                                    <td>{$rep.value}</td>
                                 </tr>
-                            {/if}
+                            {/foreach}
+                        {else}
+                            <tr>
+                                <td colspan="3">No reputation data available</td>
+                            </tr>
+                        {/if}
                         </tbody>
                     </table>
                 </div>
