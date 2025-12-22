@@ -7,7 +7,7 @@ class Admin extends MX_Controller
     // ------------------------------------------------------------------------
 
     /**
-     * Slot-Mapping für Equipment -> Template-Key
+     * Slot-Mapping für Equipment -> Template-Key based on Client Lua 3.3.5
      */
     private const SLOT_NAMES = [
         0  => "none",
@@ -35,6 +35,35 @@ class Admin extends MX_Controller
         22 => "bag3",
         23 => "bag4",
     ];
+
+    private const SLOT_NAMES_WHEAD_MODEL = [
+
+        1  => "head",
+        2  => "neck",
+        3  => "shoulders",
+        4  => "body",
+        5  => "chest",
+        6  => "waist",
+        7  => "legs",
+        8  => "feet",
+        9  => "wrists",
+        10 => "hands",
+        11 => "finger1",
+        12 => "finger2",
+        13 => "trinket1",
+        14 => "trinket2",
+        15 => "back",
+        16 => "mainhand",
+        17 => "offhand",
+        18 => "ranged",
+        19 => "tabard",
+
+        20 => "robe",          // Chest (Robe)
+        21 => "mainhand_new",  // Main Hand (new)
+        22 => "offhand_new",   // Off Hand (new)
+    ];
+
+
 
     /**
      * Slots, die im 3D-Modell dargestellt werden dürfen.
@@ -336,24 +365,23 @@ class Admin extends MX_Controller
      * @param int $itemId
      * @return string
      */
-    public function getItemDisplayID($itemId)
+    public function getItemDisplayID(int $itemId): int
     {
-        $itemId = (int)$itemId;
-
         try {
             $xml = $this->fetchWowheadItemXml($itemId);
+
             if (!$xml || !isset($xml->item->icon['displayId'])) {
                 throw new Exception('XML invalid or no displayId');
             }
 
-            $displayId = (string)$xml->item->icon['displayId'];
-            return $displayId !== '' ? $displayId : '0';
+            return (int)$xml->item->icon['displayId'];
 
         } catch (Exception $e) {
             error_log("getItemDisplayID error for item {$itemId}: " . $e->getMessage());
-            return '0';
+            return 0;
         }
     }
+
 
     // ------------------------------------------------------------------------
     //  Replacement-Item Logik (aufgeteilt)
@@ -581,6 +609,7 @@ class Admin extends MX_Controller
 
         // Items & Modelle für Template vorbereiten
         if (is_array($equipment)) {
+
             foreach (self::SLOT_NAMES as $slotId => $slotName) {
 
                 // Es gibt ein Item im Slot
@@ -599,7 +628,7 @@ class Admin extends MX_Controller
                     if (in_array($slotId, self::ALLOWED_MODEL_SLOTS, true) && $equippedId > 0) {
                         (int)$DisplayID = $this->getItemDisplayID($equippedId);
                         if ($DisplayID > 0) {
-                            switch ($slotId) {
+                            switch ($slotId) { // new whead slots moved
                                 case 15:
                                     $slotId = 16;
                                     break;
@@ -612,23 +641,8 @@ class Admin extends MX_Controller
 
 
                             }
+                            $this->model[] = array($slotId, $DisplayID);
 
-                            $replacementDisplayID = $this->getItemDisplayID($replacementId);
-                            $transmog = [];
-                            if ($replacementId != $equippedId) {
-                                $transmog = [
-                                    "entry" => (int)$replacementId,
-                                    "displayid" => (int)$replacementDisplayID
-                                ];
-                            }
-                            $this->model[] = [
-                                "item" => [
-                                    "entry" => $equippedId,
-                                    "displayid" => (int)$DisplayID
-                                ],
-                                "transmog" => $transmog,
-                                "slot" => $slotId
-                            ];
                         }
                     }
                 } else {
@@ -644,6 +658,7 @@ class Admin extends MX_Controller
         // Für das Template
         $this->charData['items'] = $this->items;
         $this->charData['model'] = $this->model;
+
     }
 
     // ------------------------------------------------------------------------

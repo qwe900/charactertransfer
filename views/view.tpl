@@ -1,8 +1,7 @@
 
-
+<script src="https://wow.zamimg.com/js/tooltips.js"></script>
 
 <script>
-    // Wowhead Tooltips
     const whTooltips = {
         colorLinks: true,
         iconizeLinks: true,
@@ -10,11 +9,9 @@
         renameLinks: false,
 
     };
-</script>
 
-<script src="https://wow.zamimg.com/js/tooltips.js"></script>
 
-<script>
+
     var talents = {json_encode($talenttree)};  // FusionGen template variable
     var achievements = {json_encode($achievements)};  // FusionGen template variable
     var professions = {json_encode($professions)};  // FusionGen template variable
@@ -105,22 +102,27 @@
                     <!-- ===== Model Viewer config ONCE ===== -->
 
                     <script src="{$url}charactertransfer/replica/modelviewer/live/viewer/viewer.min.js"></script>
+                    <script src="{$url}application/modules/charactertransfer/js/wowmodel.min.js"></script>
 
-                    <!-- 3) Configure paths BEFORE your module code runs -->
                     <script>
-                        // IMPORTANT: point this to the content root
                         window.CONTENT_PATH = "{$url}charactertransfer/replica/modelviewer/live/";
 
-                        // Define WH if not present
+                        const character = {
+                            "race": {$main.race|default:7},
+                            "gender": {$main.gender|default:1},
+                            "skin": 4,
+                            "face": 0,
+                            "hairStyle": 5,
+                            "hairColor": 5,
+                            "facialStyle": 5,
+                            items: {if isset($model) && is_array($model)}{json_encode($model)}{else}[]{/if}
+                        };
+                        const model = generateModels(1, `#model_3d`, character);
 
-                        window.WH = {
-                            debug: console.log,
-                            defaultAnimation: "Stand",
-                            WebP: { getImageExtension: () => ".webp" },
-
+                        WH.debug = function(param,param2, param3) {
+                            console.log(param, param2, param3);
                         }
                     </script>
-                    <script src="{$url}application/modules/charactertransfer/js/wowmodel.min.js"></script>
 
 
                     <div class="col-12 col-md-2">
@@ -770,25 +772,7 @@
                     }
 
                     document.getElementById("talents").innerHTML += '<td>' + td1 + ' </td><td>' + td2 + ' </td>';
-                </script>
 
-                <script>
-                    const character = {
-                        "race": 5,
-                        "gender": 1,
-                        "skin": 4,
-                        "face": 0,
-                        "hairStyle": 5,
-                        "hairColor": 5,
-                        "facialStyle": 5,
-
-                    };
-
-                    (async () => {
-                        var items = await findItemsInEquipments(model)
-                        character.items = items;
-                        const modelViewer = await generateModels(1, `#model_3d`, character);
-                    })();
                     $(document).ready(function() {
 
                         // checkbox swap equipped/replacement
