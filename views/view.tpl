@@ -456,7 +456,7 @@
                         <!-- SUMMARY -->
                         <div id="contentSummary" class="content-item">
                             <div class="container">
-                                <h1>{lang("achievementpoints", "charactertransfer")}: {$achievementspoints}</h1>
+                            <h1>{lang("achievementpoints", "charactertransfer")}: {$achievementspoints}</h1>
 
                                 <label class="white-text" for="progressOverall">{lang("overall_progress", "charactertransfer")}</label>
                                 <div class="progress position-relative" id="progressOverall">
@@ -865,24 +865,24 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                        <tr>
-                            <th>Statistic</th>
-                            <th>Value</th>
-                        </tr>
+                            <tr>
+                                <th>Statistic</th>
+                                <th>Value</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {if isset($main.stats) && is_array($main.stats)}
-                            {foreach $main.stats as $statName => $statValue}
+                            {if isset($main.stats) && is_array($main.stats)}
+                                {foreach $main.stats as $statName => $statValue}
+                                    <tr>
+                                        <td>{$statName}</td>
+                                        <td>{$statValue}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
                                 <tr>
-                                    <td>{$statName}</td>
-                                    <td>{$statValue}</td>
+                                    <td colspan="2">No statistics available</td>
                                 </tr>
-                            {/foreach}
-                        {else}
-                            <tr>
-                                <td colspan="2">No statistics available</td>
-                            </tr>
-                        {/if}
+                            {/if}
                         </tbody>
                     </table>
                 </div>
@@ -896,26 +896,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                        <tr>
-                            <th>Mount</th>
-                            <th>Spell ID</th>
-                        </tr>
+                            <tr>
+                                <th>Mount</th>
+                                <th>Spell ID</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {if isset($mounts) && is_array($mounts)}
-                            {foreach $mounts as $mount}
+                            {if isset($mounts) && is_array($mounts)}
+                                {foreach $mounts as $mount}
+                                    <tr>
+                                        <td>
+                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/spell={$mount.spell}"></a>
+                                        </td>
+                                        <td>{$mount.spell}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
                                 <tr>
-                                    <td>
-                                        <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/spell={$mount.spell}"></a>
-                                    </td>
-                                    <td>{$mount.spell}</td>
+                                    <td colspan="2">No mounts available</td>
                                 </tr>
-                            {/foreach}
-                        {else}
-                            <tr>
-                                <td colspan="2">No mounts available</td>
-                            </tr>
-                        {/if}
+                            {/if}
                         </tbody>
                     </table>
                 </div>
@@ -929,26 +929,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                        <tr>
-                            <th>Companion</th>
-                            <th>Creature ID</th>
-                        </tr>
+                            <tr>
+                                <th>Companion</th>
+                                <th>Creature ID</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {if isset($pets) && is_array($pets)}
-                            {foreach $pets as $pet}
+                            {if isset($pets) && is_array($pets)}
+                                {foreach $pets as $pet}
+                                    <tr>
+                                        <td>
+                                            <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/npc={$pet.creature}"></a>
+                                        </td>
+                                        <td>{$pet.creature}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
                                 <tr>
-                                    <td>
-                                        <a data-wh-rename-link="true" data-wh-icon-size="small" href="https://www.wowhead.com/wotlk/de/npc={$pet.creature}"></a>
-                                    </td>
-                                    <td>{$pet.creature}</td>
+                                    <td colspan="2">No companions available</td>
                                 </tr>
-                            {/foreach}
-                        {else}
-                            <tr>
-                                <td colspan="2">No companions available</td>
-                            </tr>
-                        {/if}
+                            {/if}
                         </tbody>
                     </table>
                 </div>
@@ -962,26 +962,26 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
                         <thead>
-                        <tr>
-                            <th>Faction</th>
-                            <th>Standing</th>
-                            <th>Value</th>
-                        </tr>
+                            <tr>
+                                <th>Faction</th>
+                                <th>Standing</th>
+                                <th>Value</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {if isset($reputation) && is_array($reputation)}
-                            {foreach $reputation as $rep}
+                            {if isset($reputation) && is_array($reputation)}
+                                {foreach $reputation as $rep}
+                                    <tr>
+                                        <td>{$rep.faction}</td>
+                                        <td>{$rep.standing}</td>
+                                        <td>{$rep.value}</td>
+                                    </tr>
+                                {/foreach}
+                            {else}
                                 <tr>
-                                    <td>{$rep.faction}</td>
-                                    <td>{$rep.standing}</td>
-                                    <td>{$rep.value}</td>
+                                    <td colspan="3">No reputation data available</td>
                                 </tr>
-                            {/foreach}
-                        {else}
-                            <tr>
-                                <td colspan="3">No reputation data available</td>
-                            </tr>
-                        {/if}
+                            {/if}
                         </tbody>
                     </table>
                 </div>
