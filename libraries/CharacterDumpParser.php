@@ -573,29 +573,8 @@ class CharacterDumpParser
         // --------------------------------------------------------------------
         //  Reputation
         // --------------------------------------------------------------------
-        $reputation = [];
 
-        if (isset($data["reputation"]) && is_array($data["reputation"])) {
-            foreach ($data["reputation"] as $rep) {
-                if (!is_array($rep)) {
-                    continue;
-                }
-
-                $factionId = $rep['faction'] ?? 0;
-                $standing  = $rep['standing'] ?? 0;
-                $value     = $rep['value'] ?? 0;
-
-                if ($factionId != 0) {
-                    $reputation[] = [
-                        'faction'  => $factionId,
-                        'standing' => $standing,
-                        'value'    => $value,
-                    ];
-                }
-            }
-        }
-
-        $chardata["reputation"] = $reputation;
+        $chardata["reputation"] = $data["reputation"];
 
         // --------------------------------------------------------------------
         //  Professionen / Skills

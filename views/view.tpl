@@ -972,9 +972,11 @@
                             {if isset($reputation) && is_array($reputation)}
                                 {foreach $reputation as $rep}
                                     <tr>
-                                        <td>{$rep.faction}</td>
-                                        <td>{$rep.standing}</td>
-                                        <td>{$rep.value}</td>
+
+                                        <td><a data-wh-rename-link="true" data-wh-icon-size="tiny" href="https://www.wowhead.com/faction={$rep.ID}">Faction name from db later</a>
+                                        </td>
+                                        <td>XX</td>
+                                        <td>{$rep.Value}</td>
                                     </tr>
                                 {/foreach}
                             {else}
