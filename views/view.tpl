@@ -118,7 +118,8 @@
                             "facialStyle": 5,
                             items: {if isset($model) && is_array($model)}{json_encode($model)}{else}[]{/if}
                         };
-                        const model = generateModels(1, `#model_3d`, character);
+
+                        const model = generateModels(1, '#model_3d', character);
 
                         WH.debug = function(param,param2, param3) {
                             console.log(param, param2, param3);
@@ -455,6 +456,8 @@
                         <!-- SUMMARY -->
                         <div id="contentSummary" class="content-item">
                             <div class="container">
+                            <h1>{lang("achievementpoints", "charactertransfer")}: {$achievementspoints}</h1>
+
                                 <label class="white-text" for="progressOverall">{lang("overall_progress", "charactertransfer")}</label>
                                 <div class="progress position-relative" id="progressOverall">
                                     <div class="progress-bar" data-cat="overall" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
@@ -733,11 +736,6 @@
                 </table>
 
                 <script>
-                    const model = {json_encode($model)};  // FusionGen template variable
-                </script>
-
-                <script type="text/javascript">
-
 
                     professions.main.forEach(function(item) {
                         var html = '<div class="stub">' + item.Link + ' ' + item.Current + ' / ' + item.Max + '</div>';

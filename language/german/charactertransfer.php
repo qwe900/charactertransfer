@@ -95,6 +95,7 @@ $lang['name'] = "Name";
 $lang['points'] = "Punkte";
 $lang['time'] = "Zeit";
 $lang['count'] = "Anzahl";
+$lang['achievementpoints'] = "Erfolgspunkte";
 
 // Admin Page
 $lang['fusiongen_cms_title'] = "FusionGen CMS WoW Addon Vorlage";
