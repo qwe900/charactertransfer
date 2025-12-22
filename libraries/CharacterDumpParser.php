@@ -172,6 +172,55 @@ class CharacterDumpParser
         return "$days days, $hours hours, $minutes minutes";
     }
 
+
+    /**
+     * Encodiert Glyphen in Wowhead-Glyphen-Hash
+     *
+     */
+
+    function encodeWowheadGlyphHashFromType(array $glyphList): string
+    {
+        $alphabet = '0123456789abcdefghjkmnpqrstvwxyz';
+
+        // 1 = Major, 2 = Minor
+        $majors = [];
+        $minors = [];
+
+        foreach ($glyphList as $g) {
+            $type = (int)($g['Type'] ?? 0);
+            $spell = (int)($g['spell'] ?? 0);
+            if ($spell <= 0) continue;
+
+            if ($type === 1) $majors[] = $spell;
+            if ($type === 2) $minors[] = $spell;
+        }
+
+        // Slot-Mapping nach Reihenfolge:
+        // Major Slots 0,1,2
+        // Minor Slots 3,4,5
+        $slotSpells = [];
+        for ($i = 0; $i < 3; $i++) {
+            if (isset($majors[$i])) $slotSpells[$i] = $majors[$i];
+        }
+        for ($i = 0; $i < 3; $i++) {
+            if (isset($minors[$i])) $slotSpells[3 + $i] = $minors[$i];
+        }
+
+        ksort($slotSpells);
+
+        $hash = '0';
+        foreach ($slotSpells as $slot => $spellId) {
+            $hash .= $alphabet[$slot];
+            $hash .= $alphabet[($spellId >> 15) & 31];
+            $hash .= $alphabet[($spellId >> 10) & 31];
+            $hash .= $alphabet[($spellId >> 5)  & 31];
+            $hash .= $alphabet[$spellId & 31];
+        }
+
+        return $hash;
+    }
+
+
     // ------------------------------------------------------------------------
     //  Hauptparser: normalisiert den Dump
     // ------------------------------------------------------------------------
@@ -370,6 +419,17 @@ class CharacterDumpParser
         $chardata["skills"]  = $data["skills"] ?? [];
         $chardata["glyphs"]  = $data["glyphs"] ?? [];
         $chardata["achievements"] = $data["achiev"] ?? [];
+        $points = 0;
+        foreach ($chardata["achievements"] as $achievement) {
+            if($achievement["completed"] == 1) {
+                $points = $points + $achievement["points"];
+            }
+        }
+        $chardata["achievementspoints"] = $points;
+
+
+
+
 
         // --------------------------------------------------------------------
         //  Inventory / Equipment
@@ -799,11 +859,12 @@ class CharacterDumpParser
 
             $ranks2 = rtrim($ranks2, '-');
         }
-
+        $glyphcodeOne =  $this->encodeWowheadGlyphHashFromType($chardata["glyphs"][0]);
+        $glyphcodeTwo =  $this->encodeWowheadGlyphHashFromType($chardata["glyphs"][1]);
         $chardata["specmask"] = $specmask ?? [];
 
-        $chardata["talenttree"][1]["link"] = $ranks ?? '';
-        $chardata["talenttree"][2]["link"] = $ranks2 ?? '';
+        $chardata["talenttree"][1]["link"] = $ranks ."_" . $glyphcodeOne ?? '';
+        $chardata["talenttree"][2]["link"] = $ranks2 ."_" . $glyphcodeTwo ?? '';
         //
 
 
