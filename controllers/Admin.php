@@ -10,7 +10,6 @@ class Admin extends MX_Controller
      * Slot-Mapping für Equipment -> Template-Key based on Client Lua 3.3.5
      */
     private const SLOT_NAMES = [
-        0  => "none",
         1  => "head",
         2  => "neck",
         3  => "shoulders",
@@ -34,33 +33,6 @@ class Admin extends MX_Controller
         21 => "bag2",
         22 => "bag3",
         23 => "bag4",
-    ];
-
-    private const SLOT_NAMES_WHEAD_MODEL = [
-
-        1  => "head",
-        2  => "neck",
-        3  => "shoulders",
-        4  => "body",
-        5  => "chest",
-        6  => "waist",
-        7  => "legs",
-        8  => "feet",
-        9  => "wrists",
-        10 => "hands",
-        11 => "finger1",
-        12 => "finger2",
-        13 => "trinket1",
-        14 => "trinket2",
-        15 => "back",
-        16 => "mainhand",
-        17 => "offhand",
-        18 => "ranged",
-        19 => "tabard",
-
-        20 => "robe",          // Chest (Robe)
-        21 => "mainhand_new",  // Main Hand (new)
-        22 => "offhand_new",   // Off Hand (new)
     ];
 
 
@@ -90,8 +62,8 @@ class Admin extends MX_Controller
     /**
      * Assets
      */
-    private $js;
     private $css;
+    private $js;
 
     /**
      * Charakter-/Realm-bezogene Properties
@@ -630,18 +602,20 @@ class Admin extends MX_Controller
                         if ($DisplayID > 0) {
                             switch ($slotId) { // new whead slots moved
                                 case 15:
-                                    $slotId = 16;
+                                    $slotIdModel = 16;
                                     break;
                                 case 16:
-                                    $slotId = 21;
+                                    $slotIdModel = 21;
                                     break;
                                 case 17:
-                                    $slotId = 22;
+                                    $slotIdModel = 22;
                                     break;
+                                    default:
+                                    $slotIdModel = $slotId;
 
 
                             }
-                            $this->model[] = array($slotId, $DisplayID);
+                            $this->model[] = array($slotIdModel, $DisplayID);
 
                         }
                     }

@@ -38,9 +38,10 @@
 </script>
 
 <div class="container">
-    <h1 class="text-center">{$main.name} ({$main.level})</h1>
+    <h1 class="text-center">{$main.name} {$main.racename} {$main.classname}  </h1>
     <div class="text-center">
-        Realmlist: {$main.ServerIP}, Realm: {$main.ServerRealm}, Played Time: {$main.playtime}
+        Realmlist: {$main.ServerIP}, Realm: {$main.ServerRealm}, Total Playtime: {$main.playtime} ,
+        level {$main.level} since {$main.playtimeOnLevel}
     </div>
 
     <!-- Nav tabs -->

@@ -199,9 +199,8 @@ class CharacterDumpParser
         $chardata["main"]["specs"]       = $data["unitinfo"]["specs"] ?? [];
         $chardata["main"]["honor"]       = $data["unitinfo"]["honor"] ?? 0;
         $chardata["main"]["stats"]       = $data["unitstats"] ?? [];
-        $chardata["main"]["playtime"]    = isset($data["unitinfo"]["playtime"])
-            ? $this->convertSeconds($data["unitinfo"]["playtime"])
-            : $this->convertSeconds(0);
+        $chardata["main"]["playtime"]    = isset($data["unitinfo"]["playtime"]) ? $this->convertSeconds($data["unitinfo"]["playtime"]) : $this->convertSeconds(0);
+        $chardata["main"]["playtimeOnLevel"]    = isset($data["unitinfo"]["playtimeonlevel"]) ? $this->convertSeconds($data["unitinfo"]["playtimeonlevel"]) : $this->convertSeconds(0);
         $chardata["main"]["kills"]       = $data["unitinfo"]["kills"] ?? 0;
         $chardata["main"]["arenapoints"] = $data["unitinfo"]["arenapoints"] ?? 0;
         $chardata["main"]["level"]       = $data["unitinfo"]["level"] ?? 1;
@@ -319,6 +318,7 @@ class CharacterDumpParser
 
         $chardata["newspells"]  = $newspells;
         $chardata["main"]["class"] = $class;
+        $chardata["main"]["classname"] = $className;
 
         // --------------------------------------------------------------------
         //  Rasse -> interne ID
@@ -341,6 +341,7 @@ class CharacterDumpParser
         }
 
         $chardata["main"]["race"] = $race;
+        $chardata["main"]["racename"] = $raceName;
 
         // --------------------------------------------------------------------
         //  Geschlecht (Lua 1/2 -> 0/1)
@@ -361,6 +362,7 @@ class CharacterDumpParser
         $chardata["main"]["gender"]      = $gender;
         $chardata["main"]["ServerIP"]    = $data["globalinfo"]["realmlist"] ?? '';
         $chardata["main"]["ServerRealm"] = $data["globalinfo"]["realm"] ?? '';
+        $chardata["main"]["locale"] = $data["globalinfo"]["locale"] ?? '';
 
         // --------------------------------------------------------------------
         //  Skills, Glyphen (Rohdaten, werden weiter unten noch verarbeitet)
